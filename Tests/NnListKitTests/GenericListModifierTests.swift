@@ -103,7 +103,7 @@ extension GenericListModifierTests {
                  file: StaticString = #filePath, line: UInt = #line) ->  GenericListModifier<TestItem> {
         
         let validator = validator ?? MockNnListNameValidator()
-        let sut = GenericListModifier<TestItem>(
+        let sut = makeModifier(
             cache: cache ?? makeCache(),
             factory: MockNnListItemFactory(),
             alerts: alerts ?? makeAlerts(),
@@ -112,88 +112,5 @@ extension GenericListModifierTests {
         trackForMemoryLeaks(sut, file: file, line: line)
         
         return sut
-    }
-    
-    func makeAlerts(_ name: String = "name") -> NnListModifierAlerts {
-        
-        MockNnListModifierAlerts(name)
-    }
-    
-    func makeCache(_ items: [TestItem] = []) -> MockNnListItemCache {
-        
-        MockNnListItemCache(items)
-    }
-    
-    func makeValidator(showError: Bool = false) -> MockNnListNameValidator  {
-        
-        MockNnListNameValidator(showError: showError)
-    }
-}
-
-// MARK: - Helper Classes
-extension GenericListModifierTests {
-    
-    class MockNnListItemCache: NnListItemCache {
-        
-        var items: [TestItem]
-        
-        init(_ items: [TestItem]) {
-            self.items = items
-        }
-        
-        func getItems<T>() -> [T] where T: NnListItem {
-            items.compactMap { $0 as? T }
-        }
-    }
-    
-    class MockNnListItemFactory: NnListItemFactory {
-
-        func makeNewItem<T>(id: T.ID?, name: String) -> T where T: NnListItem {
-
-            let id = id as? String ?? "NewTestId"
-
-            return TestItem(id: id, name: name) as! T
-        }
-    }
-    
-    class MockNnListModifierAlerts: NnListModifierAlerts {
-        
-        private var name = ""
-        
-        init(_ name: String = "") {
-            self.name = name
-        }
-        
-        func showAddAlert(completion: @escaping (String) -> Void) {
-            
-            completion(name)
-        }
-        
-        func showEditAlert(_ oldName: String,
-                           completion: @escaping (String) -> Void) {
-            completion(name)
-        }
-        
-        func showDeleteAlert(itemName name: String,
-                             completion: @escaping () -> Void) {
-            completion()
-        }
-    }
-    
-    class MockNnListNameValidator: NnListNameValidator {
-        
-        let showError: Bool
-        
-        private var error: Error {
-            NSError(domain: "Test", code: 0)
-        }
-        
-        init(showError: Bool = false) {
-            self.showError = showError
-        }
-        
-        func validateName(_ name: String) throws {
-            if showError { throw error }
-        }
     }
 }

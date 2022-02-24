@@ -15,10 +15,10 @@ public final class NnListManager<T: NnListItem> {
     
     
     // MARK: - Init
-    init(policy: NnListPolicy,
-         alerts: NnListManagerAlerts,
-         remote: NnListRemoteAPI,
-         modifier: GenericListModifier<T>) {
+    public init(policy: NnListPolicy,
+                alerts: NnListManagerAlerts,
+                remote: NnListRemoteAPI,
+                modifier: GenericListModifier<T>) {
         
         self.policy = policy
         self.alerts = alerts
