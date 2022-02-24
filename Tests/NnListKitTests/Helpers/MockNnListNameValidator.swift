@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  MockNnListNameValidator.swift
 //  
 //
 //  Created by Nikolai Nobadi on 2/23/22.
@@ -8,19 +8,15 @@
 import NnListKit
 import Foundation
 
-class MockNnListNameValidator: NnListNameValidator {
+final class MockNnListNameValidator: NnListNameValidator {
     
-    let showError: Bool
+    private let error: TestError?
     
-    private var error: Error {
-        NSError(domain: "Test", code: 0)
-    }
-    
-    init(showError: Bool = false) {
-        self.showError = showError
+    init(error: TestError? = nil) {
+        self.error = error
     }
     
     func validateName(_ name: String) throws {
-        if showError { throw error }
+        if let error = error { throw error }
     }
 }

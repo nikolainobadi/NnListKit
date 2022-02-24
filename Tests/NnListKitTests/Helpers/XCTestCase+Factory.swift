@@ -32,8 +32,8 @@ extension XCTestCase {
         MockNnListItemCache(items)
     }
     
-    func makeValidator(showError: Bool = false) -> MockNnListNameValidator  {
+    func makeValidator(_ modError: TestError? = nil) -> MockNnListNameValidator  {
         
-        MockNnListNameValidator(showError: showError)
+        MockNnListNameValidator(error: modError)
     }
 }

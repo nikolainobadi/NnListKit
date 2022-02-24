@@ -11,7 +11,7 @@ import NnListKit
 final class GenericListModifierTests: XCTestCase {
     
     func test_addNew_error() {
-        let validator = makeValidator(showError: true)
+        let validator = makeValidator(.addModError)
         let sut = makeSUT(validator: validator)
         let exp = expectation(description: "waiting for error...")
         
@@ -42,7 +42,7 @@ final class GenericListModifierTests: XCTestCase {
     }
     
     func test_edit_error() {
-        let validator = makeValidator(showError: true)
+        let validator = makeValidator(.editModError)
         let sut = makeSUT(validator: validator)
         let exp = expectation(description: "waiting for error...")
         
