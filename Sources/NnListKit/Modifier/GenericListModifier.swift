@@ -17,10 +17,10 @@ public final class GenericListModifier<T: NnListItem> {
     
     
     // MARK: - Init
-    init(cache: NnListItemCache,
-         factory: NnListItemFactory,
-         alerts: NnListModifierAlerts,
-         validator: NnListNameValidator) {
+    public init(cache: NnListItemCache,
+                factory: NnListItemFactory,
+                alerts: NnListModifierAlerts,
+                validator: NnListNameValidator) {
         
         self.cache = cache
         self.factory = factory
