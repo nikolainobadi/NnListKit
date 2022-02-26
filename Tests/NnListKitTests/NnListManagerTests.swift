@@ -293,8 +293,7 @@ extension NnListManagerTests {
         }
         
         func makeRemote() -> NnListRemoteAPI<TestItem> {
-            (upload: upload(_:completion:),
-             delete: delete(_:deletedItem:completion:))
+            ListKitComposite.makeRemote(upload: upload(_:completion:), delete: delete(_:deletedItem:completion:))
         }
     }
 }
