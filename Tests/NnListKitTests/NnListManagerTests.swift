@@ -197,18 +197,19 @@ extension NnListManagerTests {
                  line: UInt = #line) -> (sut: NnListManager<TestItem>, alerts: MockNnListManagerAlerts, remote: NnListRemoteAPISpy) {
         
         let alerts = MockNnListManagerAlerts()
-        let remote = NnListRemoteAPISpy()
+        let spy = NnListRemoteAPISpy()
         let modifier = makeTestModifier(modError: modError,
                                         cache: cache)
+        
         let sut = NnListManager<TestItem>(
             policy: policy ?? makePolicy(),
             alerts: alerts,
-            remote: remote,
+            remote: spy.makeRemote(),
             modifier: modifier)
 
         trackForMemoryLeaks(sut, file: file, line: line)
         
-        return (sut, alerts, remote)
+        return (sut, alerts, spy)
     }
     
     func makeTestModifier(modError: TestError? = nil,
@@ -257,14 +258,25 @@ extension NnListManagerTests {
         }
     }
     
-    class NnListRemoteAPISpy: NnListRemoteAPI {
+    class NnListRemoteAPISpy {
         
+        var list = [TestItem]()
+        var deletedItem: TestItem?
         private var completion:  ((Error?) -> Void)?
         
-        func upload<T>(_ list: [T],
-                       isDeleting: Bool,
-                       completion: @escaping (Error?) -> Void) where T: NnListItem {
+        func upload(_ list: [TestItem],
+                    completion: @escaping (Error?) -> Void) {
             
+            self.list = list
+            self.completion = completion
+        }
+        
+        func delete(_ list: [TestItem],
+                    deletedItem: TestItem,
+                    completion: @escaping (Error?) -> Void) {
+            
+            self.list = list
+            self.deletedItem = deletedItem
             self.completion = completion
         }
         
@@ -278,6 +290,11 @@ extension NnListManagerTests {
             }
             
             completion(error)
+        }
+        
+        func makeRemote() -> NnListRemoteAPI<TestItem> {
+            (upload: upload(_:completion:),
+             delete: delete(_:deletedItem:completion:))
         }
     }
 }

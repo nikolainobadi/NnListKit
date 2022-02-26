@@ -10,14 +10,14 @@ public final class NnListManager<T: NnListItem> {
     // MARK: - Properties
     private let policy: NnListPolicy
     private let alerts: NnListManagerAlerts
-    private let remote: NnListRemoteAPI
+    private let remote: NnListRemoteAPI<T>
     private let modifier: GenericListModifier<T>
     
     
     // MARK: - Init
     public init(policy: NnListPolicy,
                 alerts: NnListManagerAlerts,
-                remote: NnListRemoteAPI,
+                remote: NnListRemoteAPI<T>,
                 modifier: GenericListModifier<T>) {
         
         self.policy = policy
@@ -56,7 +56,7 @@ public extension NnListManager {
             try policy.verifyCanEdit()
             
             modifier.delete(item) { [weak self] newList in
-                self?.upload(newList, isDeleting: true)
+                self?.upload(newList, deletedItem: item)
             }
         } catch {
             showError(error)
@@ -83,9 +83,16 @@ private extension NnListManager {
         }
     }
     
-    func upload(_ items: [T], isDeleting: Bool = false) {
-        remote.upload(items, isDeleting: isDeleting) { [weak self] error in
-            
+    func upload(_ items: [T], deletedItem: T? = nil) {
+        if let deletedItem = deletedItem {
+            remote.delete(items, deletedItem, handleError())
+        } else {
+            remote.upload(items, handleError())
+        }
+    }
+    
+    func handleError() -> ((Error?) -> Void) {
+        return { [weak self] error in
             if let error = error {
                 self?.showError(error)
             }
@@ -104,11 +111,10 @@ public protocol NnListPolicy {
     func verifyCanEdit() throws
 }
 
-public protocol NnListRemoteAPI {
-    func upload<T: NnListItem>(_ list: [T],
-                               isDeleting: Bool,
-                               completion: @escaping (Error?) -> Void)
-}
+public typealias NnListRemoteAPI<T: NnListItem> = (
+    upload: ([T], @escaping (Error?) -> Void) -> Void,
+    delete: ([T], T, @escaping (Error?) -> Void) -> Void
+)
 
 public protocol NnListManagerAlerts {
     func showError(_ error: Error)
