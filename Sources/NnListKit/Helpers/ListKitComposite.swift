@@ -11,31 +11,24 @@ public final class ListKitComposite { }
 // MARK: - Composer
 public extension ListKitComposite {
     
-    static func makeManager<T>(cache: NnListItemCache,
-                               factory: NnListItemFactory,
-                               policy: NnListPolicy,
-                               alerts: ListKitAlerts,
-                               remote: NnListRemoteAPI<T>,
-                               validator: NnListNameValidator) -> NnListManager<T> where T: NnListItem {
-        
-        let modifier = GenericListModifier<T>(
-            cache: cache,
-            factory: factory,
-            alerts: alerts,
-            validator: validator)
-        
-        return NnListManager<T>(policy: policy,
-                                alerts: alerts,
-                                remote: remote,
-                                modifier: modifier)
-    }
-    
-    static func makeRemote<T: NnListItem>(
-        upload: @escaping UploadCompletion<T>,
-        delete: @escaping DeleteCompletion<T>) -> NnListRemoteAPI<T> {
-
-        (upload: upload, delete: delete)
-    }
+//    static func makeManager<T>(cache: NnListItemCache,
+//                               factory: NnListItemFactory,
+//                               policy: NnListPolicy,
+//                               alerts: ListKitAlerts,
+//                               remote: ooldNnListRemoteAPI<T>,
+//                               validator: NnListNameValidator) -> GenericListManager<T> where T: NnListItem {
+//        
+//        let modifier = GenericListModifier<T>(
+//            cache: cache,
+//            factory: factory,
+//            alerts: alerts,
+//            validator: validator)
+//        
+//        return GenericListManager<T>(policy: policy,
+//                                alerts: alerts,
+//                                remote: remote,
+//                                modifier: modifier)
+//    }
 }
 
 
