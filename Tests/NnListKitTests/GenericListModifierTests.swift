@@ -1,6 +1,6 @@
 //
 //  GenericListModifierTests.swift
-//  
+//
 //
 //  Created by Nikolai Nobadi on 2/23/22.
 //
@@ -58,10 +58,10 @@ final class GenericListModifierTests: XCTestCase {
     
     func test_edit_success() {
         let item = makeItem()
-        let cache = makeCache([item])
+        let factory = makeFactory([item])
         let newName = "NewName"
         let alerts = makeAlerts(newName)
-        let sut = makeSUT(cache: cache, alerts: alerts)
+        let sut = makeSUT(alerts: alerts, factory: factory)
         let exp = expectation(description: "waiting for success...")
         
         sut.edit(item) { result in
@@ -80,8 +80,8 @@ final class GenericListModifierTests: XCTestCase {
     
     func test_delete_success() {
         let item = makeItem()
-        let cache = makeCache([item])
-        let sut = makeSUT(cache: cache)
+        let factory = makeFactory([item])
+        let sut = makeSUT(factory: factory)
         let exp = expectation(description: "waiting for success...")
         
         sut.delete(item) { list in
@@ -97,20 +97,40 @@ final class GenericListModifierTests: XCTestCase {
 // MARK: - SUT
 extension GenericListModifierTests {
     
-    func makeSUT(cache: NnListItemCache? = nil,
-                 alerts: NnListModifierAlerts? = nil,
+    func makeSUT(alerts: NnListModifierAlerts? = nil,
+                 factory: MockNnListItemFactory? = nil,
                  validator: NnListNameValidator? = nil,
-                 file: StaticString = #filePath, line: UInt = #line) ->  GenericListModifier<TestItem> {
+                 file: StaticString = #filePath, line: UInt = #line) ->  GenericListModifier<MockNnListItemFactory> {
         
+        let alerts = alerts ?? MockNnListModifierAlerts()
+        let factory = factory ?? makeFactory()
         let validator = validator ?? MockNnListNameValidator()
-        let sut = makeModifier(
-            cache: cache ?? makeCache(),
-            factory: MockNnListItemFactory(),
-            alerts: alerts ?? makeAlerts(),
-            validator: validator)
+        let sut = GenericListModifier(factory: factory,
+                                      alerts: alerts,
+                                      validator: validator)
         
         trackForMemoryLeaks(sut, file: file, line: line)
         
         return sut
+    }
+    
+    func makeFactory(_ list: [TestItem] = []) -> MockNnListItemFactory {
+        
+        MockNnListItemFactory(itemList: list)
+    }
+    
+    class MockNnListItemFactory: NnListItemFactory {
+        
+        typealias Item = TestItem
+        
+        var itemList: [TestItem]
+        
+        init(itemList: [TestItem]) {
+            self.itemList = itemList
+        }
+        
+        func makeNewItem(id: String?, name: String) -> TestItem {
+            TestItem(id: id ?? "NewId", name: name)
+        }
     }
 }

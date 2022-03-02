@@ -7,15 +7,15 @@
 
 import NnListKit
 
-final class MockNnListItemCache: NnListItemCache {
-    
-    var items: [TestItem]
-    
-    init(_ items: [TestItem]) {
-        self.items = items
-    }
-    
-    func getItems<T>() -> [T] where T: NnListItem {
-        items.compactMap { $0 as? T }
-    }
-}
+//final class MockNnListItemCache: NnListItemCache {
+//    
+//    var items: [TestItem]
+//    
+//    init(_ items: [TestItem]) {
+//        self.items = items
+//    }
+//    
+//    func getItems<T>() -> [T] where T: NnListItem {
+//        items.compactMap { $0 as? T }
+//    }
+//}
