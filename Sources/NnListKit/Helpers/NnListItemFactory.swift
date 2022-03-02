@@ -10,5 +10,5 @@ public protocol NnListItemFactory {
     
     var itemList: [Item] { get }
     
-    func makeNewItem(id: Item.ID?, name: String) -> Item
+    func makeNewItem(id: String?, name: String) -> Item
 }

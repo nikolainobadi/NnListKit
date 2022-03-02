@@ -95,7 +95,7 @@ private extension GenericListModifier {
         }
     }
 
-    func makeItem(id: Item.ID? = nil, name: String) -> Item {
+    func makeItem(id: String? = nil, name: String) -> Item {
         factory.makeNewItem(id: id, name: name)
     }
 
