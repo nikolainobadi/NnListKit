@@ -6,11 +6,11 @@
 //
 
 public protocol NnListModifer {
-    associatedtype T: NnListItem
+    associatedtype Item: NnListItem
     
-    func addNew(completion: @escaping (Result<[T], Error>) -> Void)
-    func edit(_ item: T,
-              completion: @escaping (Result<[T], Error>) -> Void)
-    func delete(_ item: T,
-                completion: @escaping ([T]) -> Void)
+    func addNew(completion: @escaping (Result<[Item], Error>) -> Void)
+    func edit(_ item: Item,
+              completion: @escaping (Result<[Item], Error>) -> Void)
+    func delete(_ item: Item,
+                completion: @escaping ([Item]) -> Void)
 }

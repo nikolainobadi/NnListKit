@@ -11,7 +11,7 @@ public final class GenericListManager<Remote: NnListRemoteAPI> {
     private let policy: NnListPolicy
     private let alerts: NnListManagerAlerts
     private let remote: Remote
-    private let modifier: GenericListModifier<ListItem>
+//    private let modifier: GenericListModifier<ListItem>
     
     public typealias ListItem = Remote.Item
     
@@ -19,13 +19,14 @@ public final class GenericListManager<Remote: NnListRemoteAPI> {
     // MARK: - Init
     public init(policy: NnListPolicy,
                 alerts: NnListManagerAlerts,
-                remote: Remote,
-                modifier: GenericListModifier<ListItem>) {
+                remote: Remote//,
+//                modifier: GenericListModifier<ListItem>
+    ) {
         
         self.policy = policy
         self.alerts = alerts
         self.remote = remote
-        self.modifier = modifier
+//        self.modifier = modifier
     }
 }
 
@@ -37,7 +38,7 @@ extension GenericListManager: NnListManager {
         do {
             try policy.verifyCanAdd()
 
-            modifier.addNew(completion: handleModResult())
+//            modifier.addNew(completion: handleModResult())
         } catch {
             showError(error)
         }
@@ -47,7 +48,7 @@ extension GenericListManager: NnListManager {
         do {
             try policy.verifyCanEdit()
 
-            modifier.edit(item, completion: handleModResult())
+//            modifier.edit(item, completion: handleModResult())
         } catch {
             showError(error)
         }
@@ -57,9 +58,9 @@ extension GenericListManager: NnListManager {
         do {
             try policy.verifyCanEdit()
 
-            modifier.delete(item) { [weak self] newList in
-                self?.upload(newList, deletedItem: item)
-            }
+//            modifier.delete(item) { [weak self] newList in
+//                self?.upload(newList, deletedItem: item)
+//            }
         } catch {
             showError(error)
         }
