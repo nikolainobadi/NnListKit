@@ -5,68 +5,67 @@
 //  Created by Nikolai Nobadi on 2/23/22.
 //
 
-public final class GenericListManager<Remote: NnListRemoteAPI> {
+public final class GenericListManager<Remote: NnListRemoteAPI, Modifier: NnListModifer> where Remote.Item == Modifier.Item {
     
     // MARK: - Properties
     private let policy: NnListPolicy
     private let alerts: NnListManagerAlerts
     private let remote: Remote
-//    private let modifier: GenericListModifier<ListItem>
+    private let modifier: Modifier
     
-    public typealias ListItem = Remote.Item
+    public typealias Item = Remote.Item
     
     
     // MARK: - Init
     public init(policy: NnListPolicy,
                 alerts: NnListManagerAlerts,
-                remote: Remote//,
-//                modifier: GenericListModifier<ListItem>
-    ) {
+                remote: Remote,
+                modifier: Modifier) {
         
         self.policy = policy
         self.alerts = alerts
         self.remote = remote
-//        self.modifier = modifier
+        self.modifier = modifier
     }
 }
 
 
 // MARK: - Manager
-extension GenericListManager: NnListManager {
+public extension GenericListManager {
     
-    public func addNew() {
+    func addNew() {
         do {
             try policy.verifyCanAdd()
 
-//            modifier.addNew(completion: handleModResult())
+            modifier.addNew(completion: handleModResult())
         } catch {
             showError(error)
         }
     }
     
-    public func edit(_ item: Remote.Item) {
+    func edit(_ item: Item) {
         do {
             try policy.verifyCanEdit()
 
-//            modifier.edit(item, completion: handleModResult())
+            modifier.edit(item, completion: handleModResult())
         } catch {
             showError(error)
         }
     }
     
-    public func delete(_ item: Remote.Item) {
+    func delete(_ item: Item) {
         do {
-            try policy.verifyCanEdit()
+            try policy.verifyCanDelete()
 
-//            modifier.delete(item) { [weak self] newList in
-//                self?.upload(newList, deletedItem: item)
-//            }
+            modifier.delete(item) { [weak self] newList in
+                self?.upload(newList, deletedItem: item)
+            }
         } catch {
             showError(error)
         }
     }
     
-    public func uploadReorderedList(_ list: [Remote.Item]) {
+    func uploadReorderedList(_ list: [Item]) {
         upload(list)
     }
 }
@@ -75,7 +74,7 @@ extension GenericListManager: NnListManager {
 // MARK: - Private Methods
 private extension GenericListManager {
     
-    func handleModResult() -> (Result<[ListItem], Error>) -> Void {
+    func handleModResult() -> (Result<[Item], Error>) -> Void {
         return { [weak self] result in
             switch result {
             case .success(let list):
@@ -86,8 +85,8 @@ private extension GenericListManager {
         }
     }
     
-    func upload(_ items: [ListItem],
-                deletedItem: ListItem? = nil) {
+    func upload(_ items: [Item],
+                deletedItem: Item? = nil) {
         
         remote.upload(items,
                       deletedItem: deletedItem,
@@ -112,6 +111,7 @@ private extension GenericListManager {
 public protocol NnListPolicy {
     func verifyCanAdd() throws
     func verifyCanEdit() throws
+    func verifyCanDelete() throws
 }
 
 public protocol NnListManagerAlerts {
